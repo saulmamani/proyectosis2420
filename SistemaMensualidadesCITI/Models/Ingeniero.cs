@@ -18,6 +18,11 @@ namespace SistemaMensualidadesCITI.Models
         public DateTime FechaRegistro { get; set; }
         public string? UrlFoto { get; set; }
 
+        //para archivos (foto)
+        [NotMapped]
+        [Display (Name = "Cargar Foto")]
+        public IFormFile? FotoFile { get; set; }
+
         //relaciones 1 ----> *
         public virtual List<Pago>? Pagos { get; set; }
     }
