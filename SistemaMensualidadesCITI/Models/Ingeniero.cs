@@ -20,8 +20,12 @@ namespace SistemaMensualidadesCITI.Models
 
         //para archivos (foto)
         [NotMapped]
-        [Display (Name = "Cargar Foto")]
+        [Display(Name = "Cargar Foto")]
         public IFormFile? FotoFile { get; set; }
+
+        //atributos computados
+        [NotMapped]
+        public string? Info { get { return $"{Ci} - {Nombre}"; } }
 
         //relaciones 1 ----> *
         public virtual List<Pago>? Pagos { get; set; }

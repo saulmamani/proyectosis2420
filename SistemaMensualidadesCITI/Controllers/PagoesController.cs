@@ -49,7 +49,7 @@ namespace SistemaMensualidadesCITI.Controllers
         // GET: Pagoes/Create
         public IActionResult Create()
         {
-            ViewData["IngenieroId"] = new SelectList(_context.Ingenieros, "id", "Ci");
+            ViewData["IngenieroId"] = new SelectList(_context.Ingenieros, "id", "Info");
             ViewData["UsuarioId"] = new SelectList(_context.Usuarios, "Id", "Email");
             return View();
         }
@@ -63,6 +63,9 @@ namespace SistemaMensualidadesCITI.Controllers
         {
             if (ModelState.IsValid)
             {
+                pago.Fecha = DateOnly.FromDateTime(DateTime.Now);
+                pago.NroRecibo = GetNumero();
+
                 _context.Add(pago);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
@@ -72,59 +75,11 @@ namespace SistemaMensualidadesCITI.Controllers
             return View(pago);
         }
 
-        // GET: Pagoes/Edit/5
-        public async Task<IActionResult> Edit(int? id)
+        private int GetNumero()
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var pago = await _context.Pagos.FindAsync(id);
-            if (pago == null)
-            {
-                return NotFound();
-            }
-            ViewData["IngenieroId"] = new SelectList(_context.Ingenieros, "id", "Ci", pago.IngenieroId);
-            ViewData["UsuarioId"] = new SelectList(_context.Usuarios, "Id", "Email", pago.UsuarioId);
-            return View(pago);
-        }
-
-        // POST: Pagoes/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,NroRecibo,Fecha,Mes,Anio,Total,UsuarioId,IngenieroId")] Pago pago)
-        {
-            if (id != pago.Id)
-            {
-                return NotFound();
-            }
-
-            if (ModelState.IsValid)
-            {
-                try
-                {
-                    _context.Update(pago);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!PagoExists(pago.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-                return RedirectToAction(nameof(Index));
-            }
-            ViewData["IngenieroId"] = new SelectList(_context.Ingenieros, "id", "Ci", pago.IngenieroId);
-            ViewData["UsuarioId"] = new SelectList(_context.Usuarios, "Id", "Email", pago.UsuarioId);
-            return View(pago);
+            if (_context.Pagos.ToList().Count > 0)
+                return _context.Pagos.Max(i => i.NroRecibo) + 1;
+            return 1;
         }
 
         // GET: Pagoes/Delete/5
